@@ -113,6 +113,7 @@ while robot.step() != -1:
         cv2.rectangle(new_image1, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cv2.rectangle(new_image2, (x, y), (x + w, y + h), (0, 0, 255), 2)
     # if not cv2.threshold == thresh:
+	# change the file path
     cv2.imwrite(r"/Users/sukanyasaha/Google Drive/Advanced-Robotics/CSCI5302-AVChallenge/photos/image_original_1_" + str(counter) + "_" + str(int(lv)) + str(int(rv)) +".jpeg", new_image1)
     cv2.imwrite(r"/Users/sukanyasaha/Google Drive/Advanced-Robotics/CSCI5302-AVChallenge/photos/image_original_2_" + str(counter) + "_" + str(int(lv)) + str(int(rv)) +".jpeg", new_image2)
     cv2.imwrite(r"/Users/sukanyasaha/Google Drive/Advanced-Robotics/CSCI5302-AVChallenge/photos/image_thresh_"   + str(counter) + "_" + str(int(lv)) + str(int(rv)) +".jpeg", th2)
