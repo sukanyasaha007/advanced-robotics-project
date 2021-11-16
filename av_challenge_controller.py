@@ -102,20 +102,20 @@ while robot.step() != -1:
     canny_img = cv2.Canny(th2, 50,150)
     
     # fit the bounding box at the changes
-    cnts = cv2.findContours(th2.copy(), cv2.RETR_EXTERNAL, \
-    	cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
+    # cnts = cv2.findContours(th2.copy(), cv2.RETR_EXTERNAL, \
+    	# cv2.CHAIN_APPROX_SIMPLE)
+    # cnts = imutils.grab_contours(cnts)
     
-    for c in cnts:
+    # for c in cnts:
 	# compute the bounding box of the contour and then draw the
 	# bounding box on both input images to represent where the two
 	# images differ
-        (x, y, w, h) = cv2.boundingRect(c)
-        cv2.rectangle(new_image1, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        cv2.rectangle(new_image2, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        # (x, y, w, h) = cv2.boundingRect(c)
+        # cv2.rectangle(new_image1, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        # cv2.rectangle(new_image2, (x, y), (x + w, y + h), (0, 0, 255), 2)
     # if not cv2.threshold == thresh:
-    cv2.imwrite(r"/Users/sukanyasaha/Google Drive/Advanced-Robotics/CSCI5302-AVChallenge/photos/image_original_1_" + str(counter) + "_" + str(int(lv)) + str(int(rv)) +".jpeg", new_image1)
-    # cv2.imwrite(r"/Users/sukanyasaha/Google Drive/Advanced-Robotics/CSCI5302-AVChallenge/photos/image_original_2_" + str(counter) + "_" + str(int(lv)) + str(int(rv)) +".jpeg", new_image2)
+    # cv2.imwrite(r"/Users/sukanyasaha/Google Drive/Advanced-Robotics/CSCI5302-AVChallenge/photos/image_original_1_" + str(counter) + "_" + str(int(lv)) + str(int(rv)) +".jpeg", new_image1)
+    cv2.imwrite(r"/Users/sukanyasaha/Google Drive/Advanced-Robotics/CSCI5302-AVChallenge/photos/image_original_2_" + str(counter) + "_" + str(int(lv)) + str(int(rv)) +".jpeg", new_image2)
     cv2.imwrite(r"/Users/sukanyasaha/Google Drive/Advanced-Robotics/CSCI5302-AVChallenge/photos/image_thresh_"   + str(counter) + "_" + str(int(lv)) + str(int(rv)) +".jpeg", canny_img)
         # brake       = 1.
         # steer_angle = -31
