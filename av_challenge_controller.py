@@ -6,6 +6,7 @@ from controller import Robot, Camera
 from vehicle import Car, Driver
 import random
 import numpy as np
+import cv2
 # create the Robot instance.
 robot = Driver()
 front_camera = robot.getDevice("front_camera")
@@ -33,6 +34,31 @@ while robot.step() != -1:
     # Read the sensors:
     # Enter here functions to read sensor data, like:
     #  val = ds.getValue()
+    # Read camera
+    image = front_camera.getImage()
+    image = np.frombuffer(image, np.uint8).reshape((front_camera.getHeight(), front_camera.getWidth(), 4))
+    frame = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+    #print(frame[0][60])
+    cv2.imshow("frame", frame)
+    
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) # HSV
+    lower_gray = np.array([100, 10, 30])
+    upper_gray = np.array([120, 25, 80])
+    
+    # Threshold the HSV image to get only gray colors
+    mask = cv2.inRange(hsv, lower_gray, upper_gray)
+    
+    cv2.imshow("mask", mask)
+    
+    # Bitwise-AND mask and original image
+    res = cv2.bitwise_and(frame, frame, mask=mask)
+    #print(res[front_camera.getHeight()-1][0])
+    #print(res[front_camera.getHeight()-1][127])
+    #print("**************")
+    
+    cv2.imshow('res', res)
+    
+    cv2.waitKey(1) # Render imshows on screen
     
     # Read Lidar           
     lidar_sensor_readings = lidar.getRangeImage()
@@ -56,18 +82,33 @@ while robot.step() != -1:
     #print("Left Value: ",lv)
     #print("Right Value: ",rv)
     #print("**********")
-    if lv > 3.7 and rv > 3.7:
-        brake       = 0.0    
-        steer_angle = 0
-        speed       = 40
-    elif lv < 3.7:
-        brake       = 1.
-        steer_angle = -31
-        speed       = 20      
-    elif rv < 3.7:
-        brake       = 1.
-        steer_angle = 31
-        speed       = 20
+    
+    if lv > 10 and rv > 10:
+        if res[front_camera.getHeight()-6][0][0] == 0 and res[front_camera.getHeight()-6][0][1] == 0 and res[front_camera.getHeight()-6][0][2] == 0:
+            brake       = 1.
+            steer_angle = -31
+            speed       = 20
+        elif res[front_camera.getHeight()-6][127][0] == 0 and res[front_camera.getHeight()-6][127][1] == 0 and res[front_camera.getHeight()-6][127][2] == 0:
+            brake       = 1.
+            steer_angle = 31
+            speed       = 20
+        else:
+            brake       = 0.0    
+            steer_angle = 0
+            speed       = 40
+    else:
+        if lv > 3.7 and rv > 3.7:
+            brake       = 0.0    
+            steer_angle = 0
+            speed       = 40
+        elif lv < 3.7:
+            brake       = 1.
+            steer_angle = -31
+            speed       = 20      
+        elif rv < 3.7:
+            brake       = 1.
+            steer_angle = 31
+            speed       = 20
     
     robot.setBrakeIntensity(brake)
     robot.setSteeringAngle(steer_angle)
