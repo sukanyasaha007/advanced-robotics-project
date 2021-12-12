@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import math
 
 LIDAR_ANGLE_BINS = 667
-LIDAR_SENSOR_MAX_RANGE = 5.5 # Meters
+LIDAR_SENSOR_MAX_RANGE = 20 # Meters
 LIDAR_ANGLE_RANGE = math.radians(240)
 
 # create the Robot instance.
@@ -36,7 +36,8 @@ lidar.enable(timestep)
 lidar.enablePointCloud()
 
 lidar_offsets = np.linspace(-LIDAR_ANGLE_RANGE/2., +LIDAR_ANGLE_RANGE/2., LIDAR_ANGLE_BINS)
-lidar_offsets = lidar_offsets[83:len(lidar_offsets)-83] # remove blocked sensor rays
+#lidar_offsets = lidar_offsets[83:len(lidar_offsets)-83] 
+lidar_offsets = lidar_offsets[0:len(lidar_offsets)] 
 
 gps = robot.getDevice("gps")
 gps.enable(timestep)
@@ -82,20 +83,20 @@ while robot.step() != -1:
         wx =  math.cos(rad)*rx - math.sin(rad)*ry + pose_x
         wy =  -(math.sin(rad)*rx + math.cos(rad)*ry) + pose_y
         
-        if rho < 0.5*LIDAR_SENSOR_MAX_RANGE:
+        if rho < LIDAR_SENSOR_MAX_RANGE:
              try:
-                 map[int(wx*30)][int(wy*30)] += 0.005
-                 if map[int(wx*30)][int(wy*30)] > 1:
-                     map[int(wx*30)][int(wy*30)] = 1
-                 g = int(map[int(wx*30)][int(wy*30)]*255)
+                 map[60+int(wx*3)][230+int(wy*3)] += 0.005
+                 if map[60+int(wx*3)][230+int(wy*3)] > 1:
+                     map[60+int(wx*3)][230+int(wy*3)] = 1
+                 g = int(map[60+int(wx*3)][230+int(wy*3)]*255)
                  display.setColor(int(g*256**2+g*256+g))
-                 display.drawPixel(360-int(wy*30), int(wx*30))
+                 display.drawPixel(60+int(wx*3), 230+int(wy*3))
              except:
                  pass
-    print(int(pose_x),int(pose_y))             
+    print(60 + int(pose_x*3), 230 + int(pose_y*3))             
     display.setColor(int(0xFF0000))
-    display.drawPixel(int(pose_x*300),int(pose_y*300))
-    #display.drawPixel(360 - int(pose_y*30),int(pose_x*30))
+    #display.drawPixel(int(pose_y),int(pose_x))
+    display.drawPixel(60 + int(pose_x*3), 230 + int(pose_y*3))
     
     # Getting rid of infinity outliers
     try:
@@ -155,15 +156,15 @@ while robot.step() != -1:
         if lv > 3.7 and rv > 3.7:
             brake       = 0.0    
             steer_angle = 0
-            speed       = 40
+            speed       = 8
         elif lv < 3.7:
             brake       = 1.
             steer_angle = -31
-            speed       = 18      
+            speed       = 4      
         elif rv < 3.7:
             brake       = 1.
             steer_angle = 31
-            speed       = 18
+            speed       = 4
         
         if lv > 10 and rv > 10:
             state = 2
@@ -171,15 +172,15 @@ while robot.step() != -1:
         if (is_left_edge and is_right_edge) or (not is_left_edge and not is_right_edge):
             brake       = 0.0    
             steer_angle = 0
-            speed       = 40
+            speed       = 8
         elif not is_right_edge:
             brake       = 1.
             steer_angle = -31
-            speed       = 20      
+            speed       = 4      
         elif not is_left_edge:
             brake       = 1.
             steer_angle = 31
-            speed       = 20
+            speed       = 4
         
         if res_shadow[front_camera.getHeight()-1][0][0] != 0 and res_shadow[front_camera.getHeight()-1][0][1] != 0 and res_shadow[front_camera.getHeight()-1][0][2] != 0 and res_shadow[front_camera.getHeight()-1][127][0] != 0 and res_shadow[front_camera.getHeight()-1][127][1] != 0 and res_shadow[front_camera.getHeight()-1][127][2] != 0:
             state = 3
@@ -187,15 +188,15 @@ while robot.step() != -1:
         if (is_left_edge_shadow and is_right_edge_shadow) or (not is_left_edge_shadow and not is_right_edge_shadow):
             brake       = 0.0    
             steer_angle = 0
-            speed       = 20
+            speed       = 8
         elif (is_left_edge_shadow and not is_right_edge_shadow):
             brake       = 1.
             steer_angle = -31
-            speed       = 10    
+            speed       = 4    
         elif (not is_left_edge_shadow and is_right_edge_shadow):
             brake       = 1.
             steer_angle = 31
-            speed       = 10
+            speed       = 4
     
         if lv < 4.8 and cv < 6.1 and rv < 17.6:            
             state = 1
